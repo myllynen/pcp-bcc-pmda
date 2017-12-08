@@ -69,8 +69,10 @@ as [sysfork.py](modules/sysfork.py)
     provides the same metric as part of its [proc metrics](http://pcp.io/man/man1/pmdaproc.1.html)
     as _kernel.all.sysfork_.
 * [biotop](https://github.com/iovisor/bcc/blob/master/tools/biotop.py)
+as [biotop.py](modules/biotop.py)
   * Provides block device I/O information by process.
 * [tcplife](https://github.com/iovisor/bcc/blob/master/tools/tcplife.py)
+as [tcplife.py](modules/tcplife.py)
   * Provide per-process TCP statistics.
 
 ## Screenshot
