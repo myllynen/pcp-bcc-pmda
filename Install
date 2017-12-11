@@ -22,6 +22,7 @@ iam=bcc
 domain=499
 python_opt=true
 daemon_opt=false
+check_delay=5
 
 pmdaSetup
 pmdaInstall

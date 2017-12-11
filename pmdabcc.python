@@ -34,14 +34,13 @@ class BCCPMDA(PMDA):
     def __init__(self, name, domain):
         """ Constructor """
         PMDA.__init__(self, name, domain)
+        self.connect_pmcd()
 
         self.modules = OrderedDict()
         self.clusters = OrderedDict()
         self.prefix = "bcc."
 
         self.read_config_file()
-
-        self.connect_pmcd()
 
         self.init_modules()
         self.register_metrics()

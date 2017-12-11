@@ -42,18 +42,18 @@ metrics (e.g., http://pcp.io/man/man1/pmrep.1.html), and exporters to
 external systems like 
 [Elasticsearch](http://pcp.io/man/man1/pcp2elasticsearch.1.html), 
 [Graphite](http://pcp.io/man/man1/pcp2graphite.1.html), and 
-[Zabbix](http://pcp.io/man/man1/pcp2zabbix.1.html), it lack ability to 
-directly connect to performance metric data sources like eBPF/BCC for
+[Zabbix](http://pcp.io/man/man1/pcp2zabbix.1.html), it lacks the ability
+to directly connect to performance metric data sources like eBPF/BCC for
 efficient kernel tracing programs.
 
 There is a need to connect eBPF/BCC programs to a unified performance 
-metrics framework like PCP. There is a need to connect PCP to easily
-connect to a kernel tracing toolkit like eBPF/BCC.
+metrics framework like PCP. There is a need to connect PCP easily to a
+kernel tracing toolkit like eBPF/BCC.
 
 ## Solution
 
 PCP BCC PMDA is a plugin which extracts live performance data from eBPF 
-programs by using BCC (BPF Compiler Collection) Python frontend and 
+programs by using the BCC (BPF Compiler Collection) Python frontend and 
 provides them to any PCP client for archiving, monitoring, exporting, 
 and analysis purposes. It loads and acts as a bridge for any number of 
 configured, separate BCC Python modules embedding BPF code. Existing BCC 
@@ -65,7 +65,7 @@ Initially, three BCC programs have been converted to be used by PCP:
 * [pidpersec](https://github.com/iovisor/bcc/blob/master/tools/pidpersec.py)
 as [sysfork.py](modules/sysfork.py)
   * Merely a simple Hello World type minimalistic example which provides
-    one single metric (even which itself is not interesting as PCP already
+    one single metric (which in itself is not interesting as PCP already
     provides the same metric as part of its [proc metrics](http://pcp.io/man/man1/pmdaproc.1.html)
     as _kernel.all.sysfork_.
 * [biotop](https://github.com/iovisor/bcc/blob/master/tools/biotop.py)
@@ -134,7 +134,7 @@ EOF
   * man ./pmdabcc.1
   * vi bcc.conf
   * ./Install
-* Verify operation from logs and by fetching metrics data (data may no
+* Verify operation from logs and by fetching metrics data (data may not
   be instantly available on an idle system):
   * less /var/log/pcp/pmcd/bcc.log
   * less /var/log/pcp/pmcd/pmcd.log
