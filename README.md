@@ -118,6 +118,8 @@ EOF
   * pcp-3.12.2-1.fc27.x86_64
   * pcp-system-tools-3.12.2-1.fc27.x86_64
   * python3-pcp-3.12.2-1.fc27.x86_64
+* Put SELinux into Permissive mode (for the time being):
+  * setenforce 0
 * Install the required packages and start the _pmcd_ daemon:
   * yum install bcc-tools pcp pcp-system-tools python3-pcp
   * systemctl enable --now pmcd
@@ -125,8 +127,6 @@ EOF
   * http://pcp.io/docs/guide.html
 * Test the setup with something trivial (e.g., mimic vmstat with pmrep):
   * pmrep -b MB :vmstat
-* Put SELinux into Permissive mode (for the time being):
-  * setenforce 0
 * Copy this repository as a PCP BCC PMDA directory:
   * cp -r pcp-bcc-pmda /var/lib/pcp/pmdas/bcc
 * Configure and enable the plugin:
@@ -149,25 +149,29 @@ EOF
 ## Discussion / Open Items
 
 * Security / accesss restrictions
-  * Some of the modules may obviously provide sensitive information
-    that should not be available for non-privileged users
+  * Some of the modules should not be enabled without care as they may
+    obviously provide sensitive information that should not be available
+    for non-privileged users - see pmcd(1) for information on PMCD access
+    control configuration
 * Current modules have migrated with a minimal effort, they may contain
   unnecessary / unhelpful portions and have not been optimized for PMDA
-* Data could be transferred and stored in several ways, at least with:
+  * Since PMCD uses stdout for control messages, debug output from BPF
+    can't be enabled, however errors appearing on stderr will appear in
+    the PMDA log
+* Data could be transferred and stored in several ways, this is up to
+  modules to decide which one to implement, options are at least:
   * JSON files by using the PMDA JSON
-    * Requires reading and writing files on each fetch
+    * Requires reading and writing files on each fetch, removal on exit
   * PCP BCC PMDA modules store the data from BPF in memory
-    * Current approach
+    * Current approach used by the example modules
   * Modify BPF programs to store data in readily available format
     * PCP BCC PMDA modules would not need to store no metric data
 * For optimal performance a rewrite in C could be considered
-  * Would lose the ease of Python for unclear gain, for now not planned
+  * Would lose the ease of Python for unclear gain, not planned
 * Submit to upstream for proper inclusion as part of PCP
   * If upstream interest and no design flaws / architectural issue found
   * Use a registered PMDA code instead of the temporary 499
-  * Instead of increasing PMCD timeout when compiling modules use the
-    suggestions from https://github.com/performancecopilot/pcp/issues/387
-* Update pcp-selinux as appropriate
+* Update pcp-selinux as appropriate (see also issue #388)
 * Create and migrate more modules
 
 ## License
