@@ -237,7 +237,8 @@ class PCPBCCModule(PCPBCCBase):
 
         self.log("Initialized.")
 
-    def pid_alive(self, pid): # pylint: disable=no-self-use
+    @staticmethod
+    def pid_alive(pid):
         """ Test liveliness of PID """
         try:
             kill(int(pid), 0)
@@ -247,7 +248,7 @@ class PCPBCCModule(PCPBCCBase):
 
     def poller(self):
         """ BPF poller """
-        while True:
+        while self.bpf:
             self.bpf.kprobe_poll()
 
     def handle_ipv4_event(self, _cpu, data, _size):
@@ -324,4 +325,5 @@ class PCPBCCModule(PCPBCCBase):
             self.lock.release()
             return [value, 1]
         except: # pylint: disable=bare-except
+            self.lock.release()
             return [PM_ERR_AGAIN, 0]

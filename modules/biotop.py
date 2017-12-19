@@ -165,7 +165,8 @@ class PCPBCCModule(PCPBCCBase):
 
         self.log("Initialized.")
 
-    def pid_alive(self, pid): # pylint: disable=no-self-use
+    @staticmethod
+    def pid_alive(pid):
         """ Test liveliness of PID """
         try:
             kill(int(pid), 0)
