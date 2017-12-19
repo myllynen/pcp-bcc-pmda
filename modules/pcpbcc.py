@@ -67,6 +67,9 @@ class PCPBCCBase(object):
         """ Return BPF data as PCP metric value """
         raise NotImplementedError
 
-    def cleanup(self): # pylint: disable=no-self-use
+    def cleanup(self):
         """ Clean up at exit """
-        return
+        if self.bpf:
+            self.bpf.cleanup()
+        del self.bpf
+        self.log("BPF/kprobes detached.")
