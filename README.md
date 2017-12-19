@@ -68,6 +68,9 @@ as [sysfork.py](modules/sysfork.py)
     one single metric (even which itself is not interesting as PCP already
     provides the same metric as part of its [proc metrics](http://pcp.io/man/man1/pmdaproc.1.html)
     as _kernel.all.sysfork_.
+* [biolatency](https://github.com/iovisor/bcc/blob/master/tools/biolatency.py)
+as [biolatency.py](modules/biolatency.py)
+  * Provides block I/O latency distribution statistics.
 * [biotop](https://github.com/iovisor/bcc/blob/master/tools/biotop.py)
 as [biotop.py](modules/biotop.py)
   * Provides block device I/O information by process.
