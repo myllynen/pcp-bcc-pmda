@@ -171,7 +171,7 @@ EOF
 * Submit to upstream for proper inclusion as part of PCP
   * If upstream interest and no design flaws / architectural issue found
   * Use a registered PMDA code instead of the temporary 499
-* Update pcp-selinux as appropriate (see also issue #388)
+* Update pcp-selinux as appropriate (see also https://github.com/performancecopilot/pcp/issues/388)
 * Create and migrate more modules
 
 ## License
