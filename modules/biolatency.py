@@ -25,7 +25,7 @@ from bcc import BPF
 
 from modules.pcpbcc import PCPBCCBase
 from pcp.pmapi import pmUnits
-from cpmapi import PM_TYPE_U64, PM_SEM_COUNTER, PM_TIME_USEC
+from cpmapi import PM_TYPE_U64, PM_SEM_COUNTER, PM_COUNT_ONE
 from cpmapi import PM_ERR_AGAIN
 
 #
@@ -76,7 +76,7 @@ int trace_req_completion(struct pt_regs *ctx, struct request *req)
 #
 MODULE = 'biolatency'
 METRIC = 'disk.all.latency'
-units_usecs = pmUnits(0, 1, 0, 0, PM_TIME_USEC, 0)
+units_count = pmUnits(0, 0, 1, 0, 0, PM_COUNT_ONE)
 
 #
 # PCP BCC Module
@@ -106,7 +106,7 @@ class PCPBCCModule(PCPBCCBase):
         name = METRIC
         self.items.append(
             # Name - reserved - type - semantics - units - help
-            (name, None, PM_TYPE_U64, PM_SEM_COUNTER, units_usecs, 'block io latency distribution'),
+            (name, None, PM_TYPE_U64, PM_SEM_COUNTER, units_count, 'block io latency distribution'),
         )
         return True, self.items
 
