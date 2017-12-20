@@ -24,12 +24,11 @@ import sys
 import os
 
 from collections import OrderedDict
-from threading import Thread
 
 from pcp.pmapi import pmContext as PCP
 from pcp.pmda import PMDA, pmdaIndom, pmdaMetric
 from cpmapi import PM_INDOM_NULL
-from cpmapi import PM_ERR_VALUE, PM_ERR_PMDANOTREADY
+from cpmapi import PM_ERR_VALUE
 
 # Module references
 CONFIG = 1
@@ -52,7 +51,6 @@ class BCCPMDA(PMDA):
         PMDA.__init__(self, name, domain)
         self.connect_pmcd()
 
-        self.ready = False
         self.modules = OrderedDict()
         self.clusters = OrderedDict()
         self.prefix = "bcc."
@@ -62,10 +60,7 @@ class BCCPMDA(PMDA):
         self.init_modules()
         self.register_metrics()
         self.register_helpers()
-
-        self.thread = Thread(target=self.compile_modules)
-        self.thread.setDaemon(True)
-        self.thread.start()
+        self.compile_modules()
 
         self.set_refresh(self.bcc_refresh)
         self.set_fetch_callback(self.bcc_fetch_callback)
@@ -203,14 +198,9 @@ class BCCPMDA(PMDA):
                 self.log(module)
                 self.modules[module][COMPILE]()
             self.log("Modules compiled.")
-            self.ready = True
 
     def bcc_refresh(self, cluster):
         """ Refresh """
-        if not self.ready:
-            time.sleep(1)
-            return PM_ERR_PMDANOTREADY
-
         module = self.clusters[cluster]
         insts = {}
         try:
@@ -223,10 +213,6 @@ class BCCPMDA(PMDA):
 
     def bcc_fetch_callback(self, cluster, item, inst):
         """ Fetch callback """
-        if not self.ready:
-            time.sleep(1)
-            return [PM_ERR_PMDANOTREADY, 0]
-
         module = self.clusters[cluster]
         try:
             return self.modules[module][BPFDATA](item, inst)
