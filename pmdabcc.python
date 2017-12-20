@@ -50,6 +50,7 @@ class BCCPMDA(PMDA):
     def __init__(self, name, domain):
         """ Constructor """
         PMDA.__init__(self, name, domain)
+        self.connect_pmcd()
 
         self.ready = False
         self.modules = OrderedDict()
@@ -57,8 +58,6 @@ class BCCPMDA(PMDA):
         self.prefix = "bcc."
 
         self.read_config_file()
-
-        self.connect_pmcd()
 
         self.init_modules()
         self.register_metrics()
