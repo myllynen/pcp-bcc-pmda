@@ -71,5 +71,5 @@ class PCPBCCBase(object):
         """ Clean up at exit """
         if self.bpf:
             self.bpf.cleanup()
-        del self.bpf
+        self.bpf = None
         self.log("BPF/kprobes detached.")
