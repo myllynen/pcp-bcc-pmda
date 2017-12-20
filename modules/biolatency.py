@@ -18,6 +18,11 @@
 #
 """ PCP BCC PMDA biolatency module """
 
+# Configuration options
+# Name - type - default
+#
+# queued - boolean - False : include OS queued time in I/O time
+
 # pylint: disable=invalid-name
 
 from ctypes import c_int
