@@ -117,6 +117,7 @@ EOF
 ## Installation
 
 * Tested on latest Fedora 27 with:
+  * kernel-4.14.6-300.fc27.x86_64
   * bcc-tools-0.4.0-2.fc27.noarch
   * pcp-3.12.2-1.fc27.x86_64
   * pcp-system-tools-3.12.2-1.fc27.x86_64
