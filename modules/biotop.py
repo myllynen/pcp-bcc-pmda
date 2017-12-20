@@ -196,15 +196,23 @@ class PCPBCCModule(PCPBCCBase):
 
     def compile(self):
         """ Compile BPF """
-        self.bpf = BPF(text=bpf_text, debug=0)
-        self.bpf.attach_kprobe(event="blk_account_io_start", fn_name="trace_pid_start")
-        self.bpf.attach_kprobe(event="blk_start_request", fn_name="trace_req_start")
-        self.bpf.attach_kprobe(event="blk_mq_start_request", fn_name="trace_req_start")
-        self.bpf.attach_kprobe(event="blk_account_io_completion", fn_name="trace_req_completion")
-        self.log("Compiled.")
+        try:
+            self.bpf = BPF(text=bpf_text)
+            self.bpf.attach_kprobe(event="blk_account_io_start", fn_name="trace_pid_start")
+            self.bpf.attach_kprobe(event="blk_start_request", fn_name="trace_req_start")
+            self.bpf.attach_kprobe(event="blk_mq_start_request", fn_name="trace_req_start")
+            self.bpf.attach_kprobe(event="blk_account_io_completion", fn_name="trace_req_completion")
+            self.log("Compiled.")
+        except Exception as error:
+            self.err(str(error))
+            self.err("Module NOT active!")
+            self.bpf = None
 
     def refresh(self):
         """ Refresh BPF data """
+        if self.bpf is None:
+            return
+
         counts = self.bpf.get_table("counts")
 
         # Clean stale data

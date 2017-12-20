@@ -80,12 +80,20 @@ class PCPBCCModule(PCPBCCBase):
 
     def compile(self):
         """ Compile BPF """
-        self.bpf = BPF(text=bpf_text, debug=0)
-        self.bpf.attach_kprobe(event="sched_fork", fn_name="do_count")
-        self.log("Compiled.")
+        try:
+            self.bpf = BPF(text=bpf_text)
+            self.bpf.attach_kprobe(event="sched_fork", fn_name="do_count")
+            self.log("Compiled.")
+        except Exception as error:
+            self.err(str(error))
+            self.err("Module NOT active!")
+            self.bpf = None
 
     def refresh(self):
         """ Refresh BPF data """
+        if self.bpf is None:
+            return
+
         self.value = self.bpf["stats"][c_int(1)].value
 
     def bpfdata(self, item, inst):

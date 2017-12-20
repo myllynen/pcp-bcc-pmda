@@ -287,14 +287,22 @@ class PCPBCCModule(PCPBCCBase):
 
     def compile(self):
         """ Compile BPF """
-        self.bpf = BPF(text=bpf_text, debug=0)
-        self.bpf["ipv4_events"].open_perf_buffer(self.handle_ipv4_event, page_cnt=64)
-        self.bpf["ipv6_events"].open_perf_buffer(self.handle_ipv6_event, page_cnt=64)
-        self.thread.start()
-        self.log("Compiled.")
+        try:
+            self.bpf = BPF(text=bpf_text)
+            self.bpf["ipv4_events"].open_perf_buffer(self.handle_ipv4_event, page_cnt=64)
+            self.bpf["ipv6_events"].open_perf_buffer(self.handle_ipv6_event, page_cnt=64)
+            self.thread.start()
+            self.log("Compiled.")
+        except Exception as error:
+            self.err(str(error))
+            self.err("Module NOT active!")
+            self.bpf = None
 
     def refresh(self):
         """ Refresh BPF data """
+        if self.bpf is None:
+            return
+
         self.insts = {}
 
         self.lock.acquire()
