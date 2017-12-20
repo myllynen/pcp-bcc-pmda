@@ -154,8 +154,8 @@ EOF
 * Security / accesss restrictions
   * Some of the modules should not be enabled without care as they may
     obviously provide sensitive information that should not be available
-    for non-privileged users - see pmcd(1) for information on PMCD access
-    control configuration
+    for non-privileged users - see [pmcd(1)](http://pcp.io/man/man1/pmcd.1.html)
+    for information on PMCD access control configuration
 * Current modules have migrated with a minimal effort, they may contain
   unnecessary / unhelpful portions and have not been optimized for PMDA
   * Since PMCD uses stdout for control messages, debug output from BPF
