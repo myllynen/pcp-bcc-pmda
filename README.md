@@ -130,7 +130,7 @@ EOF
 * For a PCP Quick Guide, see:
   * http://pcp.io/docs/guide.html
 * Test the setup with something trivial (e.g., mimic vmstat with pmrep):
-  * pmrep -b MB :vmstat
+  * pmrep :vmstat
 * Copy this repository as a PCP BCC PMDA directory:
   * cp -r pcp-bcc-pmda /var/lib/pcp/pmdas/bcc
 * Configure and enable the plugin:
@@ -172,6 +172,9 @@ EOF
     * PCP BCC PMDA modules would not need to store no metric data
 * For optimal performance a rewrite in C could be considered
   * Would lose the ease of Python for unclear gain, not planned
+* Implement support for use separate module processes upon request (for
+  example, isolate = True in module config) to allow overlapping kprobes
+  * Will be added later if a real need arises, not wanted by default
 * Submit to upstream for proper inclusion as part of PCP
   * If upstream interest and no design flaws / architectural issue found
   * Use a registered PMDA code instead of the temporary 499
