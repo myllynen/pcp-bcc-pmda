@@ -23,7 +23,7 @@
 #
 # queued - boolean - False : include OS queued time in I/O time
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, line-too-long
 
 from ctypes import c_int
 from bcc import BPF
@@ -126,7 +126,7 @@ class PCPBCCModule(PCPBCCBase):
                 self.bpf.attach_kprobe(event="blk_account_io_start", fn_name="trace_req_start")
             self.bpf.attach_kprobe(event="blk_account_io_completion", fn_name="trace_req_completion")
             self.log("Compiled.")
-        except Exception as error:
+        except Exception as error: # pylint: disable=broad-except
             self.err(str(error))
             self.err("Module NOT active!")
             self.bpf = None
@@ -160,5 +160,5 @@ class PCPBCCModule(PCPBCCBase):
         try:
             key = self.pmdaIndom.inst_name_lookup(inst)
             return [self.cache[key], 1]
-        except: # pylint: disable=bare-except
+        except Exception: # pylint: disable=broad-except
             return [PM_ERR_AGAIN, 0]

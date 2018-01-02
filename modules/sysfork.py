@@ -84,7 +84,7 @@ class PCPBCCModule(PCPBCCBase):
             self.bpf = BPF(text=bpf_text)
             self.bpf.attach_kprobe(event="sched_fork", fn_name="do_count")
             self.log("Compiled.")
-        except Exception as error:
+        except Exception as error: # pylint: disable=broad-except
             self.err(str(error))
             self.err("Module NOT active!")
             self.bpf = None
@@ -100,5 +100,5 @@ class PCPBCCModule(PCPBCCBase):
         """ Return BPF data as PCP metric value """
         try:
             return [self.value, 1]
-        except: # pylint: disable=bare-except
+        except Exception: # pylint: disable=broad-except
             return [PM_ERR_AGAIN, 0]

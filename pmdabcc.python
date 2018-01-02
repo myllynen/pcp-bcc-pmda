@@ -19,7 +19,6 @@
 import configparser
 import importlib
 import atexit
-import time
 import sys
 import os
 

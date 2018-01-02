@@ -18,7 +18,7 @@
 #
 """ PCP BCC PMDA biotop module """
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, line-too-long
 
 from ctypes import c_int
 from os import kill
@@ -171,7 +171,7 @@ class PCPBCCModule(PCPBCCBase):
         try:
             kill(int(pid), 0)
             return True
-        except: # pylint: disable=bare-except
+        except Exception: # pylint: disable=broad-except
             return False
 
     def update_disk_info(self):
@@ -203,7 +203,7 @@ class PCPBCCModule(PCPBCCBase):
             self.bpf.attach_kprobe(event="blk_mq_start_request", fn_name="trace_req_start")
             self.bpf.attach_kprobe(event="blk_account_io_completion", fn_name="trace_req_completion")
             self.log("Compiled.")
-        except Exception as error:
+        except Exception as error: # pylint: disable=broad-except
             self.err(str(error))
             self.err("Module NOT active!")
             self.bpf = None
@@ -240,5 +240,5 @@ class PCPBCCModule(PCPBCCBase):
         try:
             key = self.pmdaIndom.inst_name_lookup(inst).zfill(6)
             return [self.cache[key], 1]
-        except: # pylint: disable=bare-except
+        except Exception: # pylint: disable=broad-except
             return [PM_ERR_AGAIN, 0]

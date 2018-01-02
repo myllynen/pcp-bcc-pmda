@@ -1,4 +1,4 @@
-# cat test.conf 
+# cat test.conf
 [bcc-example]
 timestamp = yes
 interval = 5s

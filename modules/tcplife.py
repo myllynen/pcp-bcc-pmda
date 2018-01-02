@@ -243,13 +243,20 @@ class PCPBCCModule(PCPBCCBase):
         try:
             kill(int(pid), 0)
             return True
-        except: # pylint: disable=bare-except
+        except Exception: # pylint: disable=broad-except
             return False
 
     def poller(self):
         """ BPF poller """
-        while self.bpf:
-            self.bpf.kprobe_poll()
+        try:
+            while self.bpf:
+                self.bpf.kprobe_poll()
+        except Exception as error: # pylint: disable=broad-except
+           self.err(str(error))
+           self.err("BPF kprobe poll failed, exiting!")
+           if self.bpf:
+               self.bpf.cleanup()
+           self.bpf = None
 
     def handle_ipv4_event(self, _cpu, data, _size):
         """ IPv4 event handler """
@@ -293,7 +300,7 @@ class PCPBCCModule(PCPBCCBase):
             self.bpf["ipv6_events"].open_perf_buffer(self.handle_ipv6_event, page_cnt=64)
             self.thread.start()
             self.log("Compiled.")
-        except Exception as error:
+        except Exception as error: # pylint: disable=broad-except
             self.err(str(error))
             self.err("Module NOT active!")
             self.bpf = None
@@ -332,6 +339,6 @@ class PCPBCCModule(PCPBCCBase):
                 value += self.ipv6_stats[key][item]
             self.lock.release()
             return [value, 1]
-        except: # pylint: disable=bare-except
+        except Exception: # pylint: disable=broad-except
             self.lock.release()
             return [PM_ERR_AGAIN, 0]

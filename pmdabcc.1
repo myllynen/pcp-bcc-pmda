@@ -14,13 +14,13 @@
 .\"
 .TH PMDABCC 1 "PCP" "Performance Co-Pilot"
 .SH NAME
-\f3pmdabcc\f1 \- BCC PMDA
+\fBpmdabcc\fR \- BCC PMDA
 .SH DESCRIPTION
-\f3pmdabcc\f1 is a Performance Metrics Domain Agent (\s-1PMDA\s0) which
+\fBpmdabcc\fR is a Performance Metrics Domain Agent (\s-1PMDA\s0) which
 extracts live performance data from extended BPF (Berkeley Packet Filter)
 programs by using BCC (BPF Compiler Collection) Python frontend.
 .PP
-\f3pmdabcc\f1 itself provides no PCP metrics or BPF code;
+\fBpmdabcc\fR itself provides no PCP metrics or BPF code;
 instead it loads and acts as a bridge for any number of configured,
 separate BCC Python modules embedding BPF code. Existing BCC Python tools
 and modules should be possible to convert as PCP BCC PMDA modules with
@@ -29,36 +29,36 @@ reasonable effort.
 See the BPF and BCC documentation for detailed description of both.
 .PP
 .SH INSTALLATION
-\f3pmdabcc\f1 reads a mandatory ini-style configuration file
+\fBpmdabcc\fR reads a mandatory ini-style configuration file
 .IP "\(bu" 4
-.I $PCP_PMDAS_DIR/bcc/bcc.conf
+\&\f(CW$PCP_PMDAS_DIR\fR/bcc/bcc.conf
 .PP
-This file contains in its \f3[pmda]\f1 section values
+This file contains in its \fB[pmda]\fR section values
 for the following PMDA options:
 .IP "\(bu" 4
 modules
 .IP "\(bu" 4
 prefix
 .PP
-\f3pmdabcc\f1 reads module-specific configuration for each module
-listed in the comma-separated list of \f3modules\f1 (mandatory).
+\fBpmdabcc\fR reads module-specific configuration for each module
+listed in the comma-separated list of \fBmodules\fR (mandatory).
 By default, all metrics from the modules will appear under the
-\f2bcc\f1 Performance Metrics Name Space (PMNS) tree, \f3prefix\f1
+\fIbcc\fR Performance Metrics Name Space (PMNS) tree, \fBprefix\fR
 (optional) can be used to change this generic prefix.
 .PP
-For each listed module a corresponding \f2[module]\f1 section must
+For each listed module a corresponding \fB[module]\fR section must
 be defined containing at least the following options:
 .IP "\(bu" 4
 module
 .IP "\(bu" 4
 cluster
 .PP
-\f3module\f1 defines the actual Python module file name to be loaded
-during PMDA startup under the \f3modules\f1 sub-directory of the PCP
-BCC PMDA installation.  \f3cluster\f1 specifies the cluster ID for the
+\fBmodule\fR defines the actual Python module file name to be loaded
+during PMDA startup under the \fBmodules\fR sub-directory of the PCP
+BCC PMDA installation.  \fBcluster\fR specifies the cluster ID for the
 metrics provided by the module under the PMNS path. Optionally,
-\f3prefix\f1 can be defined to override the generic value described above.
-All modules accept but not necessarily use the boolean \f3debug\f1 option.
+\fBprefix\fR can be defined to override the generic value described above.
+All modules accept but not necessarily use the boolean \fBdebug\fR option.
 .PP
 Modules may also support additional module-specific configuration options,
 refer to each module for their supported options.
