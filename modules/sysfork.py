@@ -1,20 +1,15 @@
 #
-# Copyright (C) 2017 Marko Myllynen <myllynen@redhat.com>
-# Copyright (C) 2015 Brendan Gregg
+# Copyright (C) 2017-2018 Marko Myllynen <myllynen@redhat.com>
 #
-# BPF portion from bcc/pidpersec by Brendan Gregg
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 """ PCP BCC PMDA sysfork module """
 
@@ -31,23 +26,7 @@ from cpmapi import PM_ERR_AGAIN
 #
 # BPF program
 #
-bpf_text = """
-#include <uapi/linux/ptrace.h>
-
-enum stat_types {
-    S_COUNT = 1,
-    S_MAXSTAT
-};
-
-BPF_ARRAY(stats, u64, S_MAXSTAT);
-
-static void stats_increment(int key) {
-    u64 *leaf = stats.lookup(&key);
-    if (leaf) (*leaf)++;
-}
-
-void do_count(struct pt_regs *ctx) { stats_increment(S_COUNT); }
-"""
+bpf_src = "modules/sysfork.bpf"
 
 #
 # PCP BCC PMDA constants
@@ -81,7 +60,7 @@ class PCPBCCModule(PCPBCCBase):
     def compile(self):
         """ Compile BPF """
         try:
-            self.bpf = BPF(text=bpf_text)
+            self.bpf = BPF(src_file=bpf_src)
             self.bpf.attach_kprobe(event="sched_fork", fn_name="do_count")
             self.log("Compiled.")
         except Exception as error: # pylint: disable=broad-except

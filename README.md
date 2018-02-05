@@ -1,6 +1,8 @@
 # PCP BCC PMDA
 
 [![License: Apache v2](https://img.shields.io/badge/license-Apache%20v2-brightgreen.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![License: GPLv2](https://img.shields.io/badge/license-GPLv2-brightgreen.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![License: GPLv3](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 ## Introduction
 
@@ -56,11 +58,12 @@ PCP BCC PMDA is a plugin which extracts live performance data from eBPF
 programs by using the BCC (BPF Compiler Collection) Python frontend and
 provides them to any PCP client for archiving, monitoring, exporting,
 and analysis purposes. It loads and acts as a bridge for any number of
-configured, separate BCC Python modules embedding BPF code. Existing BCC
-Python tools and modules should be possible to convert as PCP BCC PMDA
-modules with reasonable effort.
+configured, separate PCP BCC PMDA Python modules running BPF programs.
+Existing BCC Python tools and modules should be possible to be utilized
+with PCP BCC PMDA modules with reasonable effort.
 
-Initially, three BCC programs have been converted to be used by PCP:
+Initially, four BCC programs are available to be used by PCP, these serve
+as examples how to access different data structures used by the programs:
 
 * [pidpersec](https://github.com/iovisor/bcc/blob/master/tools/pidpersec.py)
 as [sysfork.py](modules/sysfork.py)
@@ -76,7 +79,7 @@ as [biotop.py](modules/biotop.py)
   * Provides block device I/O information by process.
 * [tcplife](https://github.com/iovisor/bcc/blob/master/tools/tcplife.py)
 as [tcplife.py](modules/tcplife.py)
-  * Provide per-process TCP statistics.
+  * Provides per-process TCP statistics.
 
 ## Screenshot
 
@@ -117,8 +120,8 @@ EOF
 ## Installation
 
 * Tested on latest Fedora 27 with:
-  * kernel-4.14.6-300.fc27.x86_64
-  * bcc-tools-0.4.0-2.fc27.noarch
+  * kernel-4.14.16-300.fc27.x86_64
+  * bcc-tools-0.5.0-1.fc27
   * pcp-3.12.2-1.fc27.x86_64
   * pcp-system-tools-3.12.2-1.fc27.x86_64
   * python3-pcp-3.12.2-1.fc27.x86_64
@@ -131,7 +134,7 @@ EOF
   * http://pcp.io/docs/guide.html
 * Test the setup with something trivial (e.g., mimic vmstat with pmrep):
   * pmrep :vmstat
-* Copy this repository as a PCP BCC PMDA directory:
+* Copy this repository as the PCP BCC PMDA directory:
   * cp -r pcp-bcc-pmda /var/lib/pcp/pmdas/bcc
 * Configure and enable the plugin:
   * cd /var/lib/pcp/pmdas/bcc
@@ -141,46 +144,48 @@ EOF
 * Verify operation from logs and by fetching metrics data (data may not
   be instantly available on an idle system):
   * less /var/log/pcp/pmcd/bcc.log
-  * less /var/log/pcp/pmcd/pmcd.log
   * pminfo -f bcc
-  * pmrep bcc.proc.io.perdev
+  * pmrep bcc.proc.sysfork
 * Export and analyse:
   * pcp2{csv,json,elasticsearch,graphite,influxdb,json,xlsx,xml,zabbix}
 * Enhance and extend:
-  * less modules/*.py
-  * vi modules/test.py
+  * less modules/*.bpf modules/*.py
+  * vi modules/test.bpf modules/test.py bcc.conf
+  * ./Remove ; ./Install ;
 
 ## Discussion / Open Items
 
+* Upstream Pull Request for proper inclusion as part of PCP
+  * https://github.com/performancecopilot/pcp/pull/409
 * Security / accesss restrictions
   * Some of the modules should not be enabled without care as they may
     obviously provide sensitive information that should not be available
     for non-privileged users - see [pmcd(1)](http://pcp.io/man/man1/pmcd.1.html)
     for information on PMCD access control configuration
-* Current modules have migrated with a minimal effort, they may contain
-  unnecessary / unhelpful portions and have not been optimized for PMDA
-  * Since PMCD uses stdout for control messages, debug output from BPF
-    can't be enabled, however errors appearing on stderr will appear in
-    the PMDA log
+* Drop copypasted BPF programs (in PCP upstream) and import BPF code on the
+  fly once the newly added _-e_ option is available on all relevant distros,
+  also utilize new configuration options (like PID filter) as program args
+  * https://github.com/iovisor/bcc/pull/1531
+* Since PMCD uses stdout for control messages, debug output from BPF/BCC
+  can't be enabled, however errors appearing on stderr will appear in
+  the PMDA log
 * Data could be transferred and stored in several ways, this is up to
   modules to decide which one to implement, options are at least:
-  * JSON files by using the PMDA JSON
-    * Requires reading and writing files on each fetch, removal on exit
   * PCP BCC PMDA modules store the data from BPF in memory
     * Current approach used by the example modules
   * Modify BPF programs to store data in readily available format
     * PCP BCC PMDA modules would not need to store no metric data
-* For optimal performance a rewrite in C could be considered
-  * Would lose the ease of Python for unclear gain, not planned
+  * JSON files by using the PMDA JSON
+    * Requires reading and writing files on each fetch, removal on exit
+    * https://github.com/performancecopilot/pcp/issues/432
 * Implement support for use separate module processes upon request (for
   example, isolate = True in module config) to allow overlapping kprobes
   * Will be added later if a real need arises, not wanted by default
-* Submit to upstream for proper inclusion as part of PCP
-  * If upstream interest and no design flaws / architectural issue found
-  * Use a registered PMDA code instead of the temporary 499
-* Update pcp-selinux as appropriate (see also https://github.com/performancecopilot/pcp/issues/388)
-* Create and migrate more modules
+* Update pcp-selinux as appropriate
+  * https://github.com/performancecopilot/pcp/issues/388
+* For potentially improved performance a rewrite in C could be considered
+  * Would lose the ease of Python for unclear gain; not planned
 
 ## License
 
-Apache v2
+GPLv2+ (PCP BCC PMDA), Apache v2 (BCC/BPF programs)

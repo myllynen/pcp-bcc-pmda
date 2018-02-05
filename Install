@@ -19,7 +19,7 @@
 . $PCP_SHARE_DIR/lib/pmdaproc.sh
 
 iam=bcc
-domain=499
+domain=149
 python_opt=true
 daemon_opt=false
 check_delay=5

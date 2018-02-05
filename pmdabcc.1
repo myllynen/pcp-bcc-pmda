@@ -1,6 +1,6 @@
 '\"macro stdmacro
 .\"
-.\" Copyright (C) 2017 Marko Myllynen <myllynen@redhat.com>
+.\" Copyright (C) 2017-2018 Marko Myllynen <myllynen@redhat.com>
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
@@ -14,89 +14,123 @@
 .\"
 .TH PMDABCC 1 "PCP" "Performance Co-Pilot"
 .SH NAME
-\fBpmdabcc\fR \- BCC PMDA
+\f3pmdabcc\f1 \- BCC PMDA
 .SH DESCRIPTION
-\fBpmdabcc\fR is a Performance Metrics Domain Agent (\s-1PMDA\s0) which
+\fBpmdabcc\fP is a Performance Metrics Domain Agent (PMDA) which
 extracts live performance data from extended BPF (Berkeley Packet Filter)
 programs by using BCC (BPF Compiler Collection) Python frontend.
 .PP
-\fBpmdabcc\fR itself provides no PCP metrics or BPF code;
+\fBpmdabcc\fP itself provides no PCP metrics or BPF code;
 instead it loads and acts as a bridge for any number of configured,
-separate BCC Python modules embedding BPF code. Existing BCC Python tools
-and modules should be possible to convert as PCP BCC PMDA modules with
-reasonable effort.
+separate PCP BCC PMDA Python modules running BPF programs.
+Existing BCC Python tools and programs should be possible to be utilized
+with PCP BCC PMDA modules with reasonable effort.
 .PP
 See the BPF and BCC documentation for detailed description of both.
 .PP
 .SH INSTALLATION
-\fBpmdabcc\fR reads a mandatory ini-style configuration file
-.IP "\(bu" 4
-\&\f(CW$PCP_PMDAS_DIR\fR/bcc/bcc.conf
+\fBpmdabcc\fP reads a mandatory ini-style configuration file
+.IP
+.PD 0
+.RS +4
+.IP \(bu 2
+.I \f(CW$PCP_PMDAS_DIR\fP/bcc/bcc.conf
+.RE
+.PD
 .PP
-This file contains in its \fB[pmda]\fR section values
+This file contains in its \fB[pmda]\fP section values
 for the following PMDA options:
-.IP "\(bu" 4
+.IP
+.PD 0
+.RS +4
+.IP \(bu 2
 modules
-.IP "\(bu" 4
+.IP \(bu
 prefix
+.RE
+.PD
 .PP
-\fBpmdabcc\fR reads module-specific configuration for each module
-listed in the comma-separated list of \fBmodules\fR (mandatory).
+\fBpmdabcc\fP reads module-specific configuration for each module
+listed in the comma-separated list of \fBmodules\fP (mandatory).
 By default, all metrics from the modules will appear under the
-\fIbcc\fR Performance Metrics Name Space (PMNS) tree, \fBprefix\fR
+\fIbcc\fP Performance Metrics Name Space (PMNS) tree, \fBprefix\fP
 (optional) can be used to change this generic prefix.
 .PP
-For each listed module a corresponding \fB[module]\fR section must
+For each listed module a corresponding \fB[module]\fP section must
 be defined containing at least the following options:
-.IP "\(bu" 4
+.IP
+.PD 0
+.RS +4
+.IP \(bu 2
 module
-.IP "\(bu" 4
+.IP \(bu
 cluster
+.RE
+.PD
 .PP
-\fBmodule\fR defines the actual Python module file name to be loaded
-during PMDA startup under the \fBmodules\fR sub-directory of the PCP
-BCC PMDA installation.  \fBcluster\fR specifies the cluster ID for the
-metrics provided by the module under the PMNS path. Optionally,
-\fBprefix\fR can be defined to override the generic value described above.
-All modules accept but not necessarily use the boolean \fBdebug\fR option.
+\fBmodule\fP defines the actual Python module file name to be loaded
+during PMDA startup under the \fImodules\fP subdirectory of the PCP
+BCC PMDA installation.
+\fBcluster\fP specifies the cluster ID for the metrics provided by
+the module under the PMNS path.
+Optionally, \fBprefix\fP can be defined to override the
+generic value described above.
+All modules accept but not necessarily use the boolean \fBdebug\fP option.
 .PP
 Modules may also support additional module-specific configuration options,
 refer to each module for their supported options.
 .PP
 Once the needed setup is ready, you can install the PMDA to load the
-configured modules and the BPF programs their provide.
+configured modules and the BPF programs their utilize.
 To install, do the following as root:
-.PP
-      # cd $PCP_PMDAS_DIR/bcc
-.br
-      # ./Install
-.PP
+.sp 1
+.RS +4
+.ft B
+.nf
+# cd $PCP_PMDAS_DIR/bcc
+# ./Install
+.fi
+.ft P
+.RE
+.sp 1
 To uninstall, do the following as root:
-.PP
-      # cd $PCP_PMDAS_DIR/bcc
-.br
-      # ./Remove
-.PP
-\fBpmdabcc\fR is launched by \fIpmcd\fR(1) and should never be executed
-directly. The \fBInstall\fR and \fBRemove\fR scripts notify \fIpmcd\fR(1)
-when the agent is installed or removed.
+.sp 1
+.RS +4
+.ft B
+.nf
+# cd $PCP_PMDAS_DIR/bcc
+# ./Remove
+.fi
+.ft P
+.RE
+.sp 1
+\fBpmdabcc\fP is launched by \fBpmcd\fP(1) and should never be
+executed directly.
+The Install and Remove scripts notify \fBpmcd\fP(1) when the
+agent is installed or removed.
 .SH FILES
-.IP "\fB$PCP_PMDAS_DIR/bcc/bcc.conf\fR" 4
-configuration file for the \fBpmdabcc\fR agent
-.IP "\fB$PCP_PMDAS_DIR/bcc/modules/*.py\fR" 4
-Python BPF/BCC modules available for the \fBpmdabcc\fR agent
-.IP "\fB$PCP_PMDAS_DIR/bcc/Install\fR" 4
-installation script for the \fBpmdabcc\fR agent
-.IP "\fB$PCP_PMDAS_DIR/bcc/Remove\fR" 4
-undo installation script for the \fBpmdabcc\fR agent
-.IP "\fB$PCP_LOG_DIR/pmcd/bcc.log\fR" 4
-default log file for messages from the \fBpmdabcc\fR agent
+.TP
+.I \f(CW$PCP_PMDAS_DIR\fP/bcc/bcc.conf
+configuration file for the \fBpmdabcc\fP agent
+.TP
+.I \f(CW$PCP_PMDAS_DIR\fP/bcc/modules/*.py
+PCP BCC PMDA Python modules available for the \fBpmdabcc\fP agent
+.TP
+.I \f(CW$PCP_PMDAS_DIR\fP/bcc/Install
+installation script for the \fBpmdabcc\fP agent
+.TP
+.I \f(CW$PCP_PMDAS_DIR\fP/bcc/Remove\fP
+undo installation script for the \fBpmdabcc\fP agent
+.TP
+.I \f(CW$PCP_LOG_DIR\fP/pmcd/bcc.log
+default log file for messages from the \fBpmdabcc\fP agent
 .SH PCP ENVIRONMENT
-Environment variables with the prefix \fBPCP_\fR are used to parameterize
-the file and directory names used by \fBPCP\fR. On each installation, the
-file \fB/etc/pcp.conf\fR contains the local values for these variables.
-The \fB$PCP_CONF\fR variable may be used to specify an alternative
-configuration file, as described in \fIpcp.conf\fR(5).
+Environment variables with the prefix \fBPCP_\fP are used to parameterize
+the file and directory names used by PCP.
+On each installation, the
+file \fB/etc/pcp.conf\fP contains the local values for these variables.
+The \fB$PCP_CONF\fP variable may be used to specify an alternative
+configuration file, as described in \fBpcp.conf\fP(5).
 .SH SEE ALSO
 .BR PCPIntro (1),
 .BR bcc (1),

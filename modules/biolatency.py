@@ -1,20 +1,15 @@
 #
-# Copyright (C) 2017 Marko Myllynen <myllynen@redhat.com>
-# Copyright (C) 2015 Brendan Gregg
+# Copyright (C) 2017-2018 Marko Myllynen <myllynen@redhat.com>
 #
-# BPF portion from bcc/biolatency by Brendan Gregg
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 """ PCP BCC PMDA biolatency module """
 
@@ -36,45 +31,7 @@ from cpmapi import PM_ERR_AGAIN
 #
 # BPF program
 #
-bpf_text = """
-#include <uapi/linux/ptrace.h>
-#include <linux/blkdev.h>
-
-typedef struct disk_key {
-    char disk[DISK_NAME_LEN];
-    u64 slot;
-} disk_key_t;
-BPF_HASH(start, struct request *);
-BPF_HISTOGRAM(dist);
-
-// time block I/O
-int trace_req_start(struct pt_regs *ctx, struct request *req)
-{
-    u64 ts = bpf_ktime_get_ns();
-    start.update(&req, &ts);
-    return 0;
-}
-
-// output
-int trace_req_completion(struct pt_regs *ctx, struct request *req)
-{
-    u64 *tsp, delta;
-
-    // fetch timestamp and calculate delta
-    tsp = start.lookup(&req);
-    if (tsp == 0) {
-        return 0;   // missed issue
-    }
-    delta = bpf_ktime_get_ns() - *tsp;
-    delta /= 1000;  // usec
-
-    // store as histogram
-    dist.increment(bpf_log2l(delta));
-
-    start.delete(&req);
-    return 0;
-}
-"""
+bpf_src = "modules/biolatency.bpf"
 
 #
 # PCP BCC PMDA constants
@@ -118,7 +75,7 @@ class PCPBCCModule(PCPBCCBase):
     def compile(self):
         """ Compile BPF """
         try:
-            self.bpf = BPF(text=bpf_text)
+            self.bpf = BPF(src_file=bpf_src)
             if self.queued:
                 self.bpf.attach_kprobe(event="blk_start_request", fn_name="trace_req_start")
                 self.bpf.attach_kprobe(event="blk_mq_start_request", fn_name="trace_req_start")
@@ -139,7 +96,7 @@ class PCPBCCModule(PCPBCCBase):
         dist = self.bpf.get_table("dist")
 
         for k, v in dist.items():
-            if k.value == 0 or v.value == 0:
+            if k.value == 0:
                 continue
             low = (1 << k.value) >> 1
             high = (1 << k.value) - 1
