@@ -117,6 +117,15 @@ EOF
 # 
 ```
 
+## Upstream Status
+
+The upstream Pull Request for BCC PMDA plugin has been merged and
+available e.g. on Fedora as _pcp-pmda-bcc_ as of PCP 4.0 release.
+
+The below installation and testing instructions are still helpful
+with earlier PCP releases and on distributions with no BCC PMDA
+package available.
+
 ## Installation
 
 * Tested on latest Fedora 27 with:
@@ -155,20 +164,19 @@ EOF
 
 ## Discussion / Open Items
 
-* Upstream Pull Request for proper inclusion as part of PCP
-  * https://github.com/performancecopilot/pcp/pull/409
 * Security / accesss restrictions
   * Some of the modules should not be enabled without care as they may
     obviously provide sensitive information that should not be available
     for non-privileged users - see [pmcd(1)](http://pcp.io/man/man1/pmcd.1.html)
     for information on PMCD access control configuration
-* Drop copypasted BPF programs (in PCP upstream) and import BPF code on the
+* Drop copy-pasted BPF programs (in PCP upstream) and import BPF code on the
   fly once the newly added _-e_ option is available on all relevant distros,
   also utilize new configuration options (like PID filter) as program args
   * https://github.com/iovisor/bcc/pull/1531
 * Since PMCD uses stdout for control messages, debug output from BPF/BCC
   can't be enabled, however errors appearing on stderr will appear in
   the PMDA log
+  * https://github.com/performancecopilot/pcp/issues/365
 * Data could be transferred and stored in several ways, this is up to
   modules to decide which one to implement, options are at least:
   * PCP BCC PMDA modules store the data from BPF in memory
