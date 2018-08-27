@@ -10,6 +10,8 @@ This repository contains a plugin to connect eBPF/BCC Python modules
 to Performance Co-Pilot performance framework/toolkit to provide a
 unified interface and advanced tools for processing BPF/BCC data.
 
+_(This plugin has now been merged to PCP upstream and recent releases.)_
+
 ## eBPF
 
 From https://www.oreilly.com/ideas/ebpf-and-systems-performance:
@@ -62,8 +64,9 @@ configured, separate PCP BCC PMDA Python modules running BPF programs.
 Existing BCC Python tools and modules should be possible to be utilized
 with PCP BCC PMDA modules with reasonable effort.
 
-Initially, four BCC programs are available to be used by PCP, these serve
-as examples how to access different data structures used by the programs:
+Initially, four BCC programs were available to be used by PCP, these
+serve as examples how to access different data structures used by the
+programs. PCP upstream today has more than twenty modules included.
 
 * [pidpersec](https://github.com/iovisor/bcc/blob/master/tools/pidpersec.py)
 as [sysfork.py](modules/sysfork.py)
@@ -119,12 +122,13 @@ EOF
 
 ## Upstream Status
 
-The upstream Pull Request for BCC PMDA plugin has been merged and
-available e.g. on Fedora as _pcp-pmda-bcc_ as of PCP 4.0 release.
+The upstream Pull Request for BCC PMDA plugin was merged to PCP 4.0
+release and the plugin is available e.g. on recent Fedora/RHEL releases
+as _pcp-pmda-bcc_ package.
 
 The below installation and testing instructions are still helpful
 with earlier PCP releases and on distributions with no BCC PMDA
-package available.
+package available (but see upstream builds at https://bintray.com/pcp/).
 
 ## Installation
 
@@ -170,29 +174,15 @@ package available.
     for non-privileged users - see [pmcd(1)](http://pcp.io/man/man1/pmcd.1.html)
     for information on PMCD access control configuration
 * Drop copy-pasted BPF programs (in PCP upstream) and import BPF code on the
-  fly once the newly added _-e_ option is available on all relevant distros,
-  also utilize new configuration options (like PID filter) as program args
-  * https://github.com/iovisor/bcc/pull/1531
+  fly once the newly added _-e_ option is available on all relevant distros
 * Since PMCD uses stdout for control messages, debug output from BPF/BCC
   can't be enabled, however errors appearing on stderr will appear in
   the PMDA log
   * https://github.com/performancecopilot/pcp/issues/365
-* Data could be transferred and stored in several ways, this is up to
-  modules to decide which one to implement, options are at least:
-  * PCP BCC PMDA modules store the data from BPF in memory
-    * Current approach used by the example modules
-  * Modify BPF programs to store data in readily available format
-    * PCP BCC PMDA modules would not need to store no metric data
-  * JSON files by using the PMDA JSON
-    * Requires reading and writing files on each fetch, removal on exit
-    * https://github.com/performancecopilot/pcp/issues/432
-* Implement support for use separate module processes upon request (for
-  example, isolate = True in module config) to allow overlapping kprobes
-  * Will be added later if a real need arises, not wanted by default
-* Update pcp-selinux as appropriate
+* Update _pcp-selinux_ as appropriate
   * https://github.com/performancecopilot/pcp/issues/388
 * For potentially improved performance a rewrite in C could be considered
-  * Would lose the ease of Python for unclear gain; not planned
+  * Would lose the ease of Python for very unclear gain; not planned
 
 ## License
 
