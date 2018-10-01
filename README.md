@@ -36,23 +36,24 @@ While BCC has made creating new BPF programs easier and the BCC project
 offers a wide variety of such tools (https://github.com/iovisor/bcc),
 basically all these programs are individual, disjoint utilities that are
 mostly meant for interactive use. This is not a suitable approach to
-collect, monitor and analyse performance data in larger environments
+collect, monitor and analyze performance data in larger environments
 where there are hundreds, if not thousands, installations and where
-human intervention is infeasible at best.
+human intervention is unfeasible at best.
 
 While PCP offers a unified interface to a great number of performance
-metrics, advanced command line utilities for analysing live or archived
+metrics, advanced command line utilities for analyzing live or archived
 metrics (e.g., http://pcp.io/man/man1/pmrep.1.html), and exporters to
 external systems like
 [Elasticsearch](http://pcp.io/man/man1/pcp2elasticsearch.1.html),
-[Graphite](http://pcp.io/man/man1/pcp2graphite.1.html), and
+[Graphite](http://pcp.io/man/man1/pcp2graphite.1.html),
+[Prometheus](https://prometheus.io/), and
 [Zabbix](http://pcp.io/man/man1/pcp2zabbix.1.html), it lacks the ability
-to directly connect to performance metric data sources like eBPF/BCC for
-efficient kernel tracing programs.
+to easily collect detailed to performance data from an in-kernel tracing
+toolkit like eBPF/BCC.
 
 There is a need to connect eBPF/BCC programs to a unified performance
-metrics framework like PCP. There is a need to connect PCP easily to a
-kernel tracing toolkit like eBPF/BCC.
+metrics framework like PCP. There is a need to connect PCP easily to an
+in-kernel tracing toolkit like eBPF/BCC.
 
 ## Solution
 
